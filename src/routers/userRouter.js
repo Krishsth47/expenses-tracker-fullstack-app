@@ -1,5 +1,5 @@
 import express from "express";
-import { insertUser } from "../models/userModel/User.model.js";
+import { findUser, insertUser } from "../models/userModel/User.model.js";
 const router = express.Router();
 
 //get user
@@ -38,10 +38,27 @@ router.post("/", async (req, res) => {
 
 //login user
 
-router.post("/login", (req, res) => {
-  console.log(req.body);
+router.post("/login", async (req, res) => {
+  try {
+    const user = await findUser(req.body);
 
-  res.send("login user");
+    user?._id
+      ? res.json({
+          status: "Success",
+          user,
+        })
+      : res.json({
+          status: "error",
+          message: "Invalid login credentials",
+        });
+    console.log(user);
+  } catch (error) {
+    console.log(error);
+    res.json({
+      status: "error",
+      message: error.message,
+    });
+  }
 });
 
 export default router;
