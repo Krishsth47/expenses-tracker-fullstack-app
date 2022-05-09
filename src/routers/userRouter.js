@@ -1,4 +1,5 @@
 import express from "express";
+import { insertUser } from "../models/userModel/User.model.js";
 const router = express.Router();
 
 //get user
@@ -10,10 +11,29 @@ router.get("/", (req, res) => {
 
 //register a user
 
-router.post("/", (req, res) => {
-  console.log(req.body);
-
-  res.send("register user");
+router.post("/", async (req, res) => {
+  try {
+    console.log(req.body);
+    const result = await insertUser(req.body);
+    result?._id
+      ? res.json({
+          status: "Success",
+          message: "User registered successfully",
+        })
+      : res.json({
+          status: "error",
+          message: "User registration failed, please try again later",
+        });
+  } catch (error) {
+    let message = error.message;
+    if (error.message.includes("duplicate key error collection")) {
+      message = "User already exists with this email";
+    }
+    res.json({
+      status: "error",
+      message,
+    });
+  }
 });
 
 //login user
