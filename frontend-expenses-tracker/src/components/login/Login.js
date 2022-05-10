@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
-import { Button, Form, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Alert, Button, Form, Row, Spinner } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 import { postLogin } from "../helpers/axiosHelper";
 
 export const Login = () => {
@@ -8,6 +8,7 @@ export const Login = () => {
   const passwordRef = useRef("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleOnSubmit = async () => {
     const email = emailRef.current.value;
@@ -19,12 +20,15 @@ export const Login = () => {
     setLoading(true);
     const { data } = await postLogin({ email, password });
     setLoading(false);
-    console.log(data);
+    // console.log(data);
 
     if (data.status === "Success") {
-      //if log in success, store user data in session storage and redirect to dashboard
       const { name, email, _id } = data.user;
+      //if log in success, store user data in session storage and redirect to dashboard
       sessionStorage.setItem("user", JSON.stringify({ name, email, _id }));
+      setError("");
+      navigate("/dashboard");
+      return;
     }
 
     //else show error message
@@ -36,6 +40,10 @@ export const Login = () => {
       <Form>
         <h3>Welcome Back</h3>
         <hr />
+
+        {loading && <Spinner animation="border" variant="primary" />}
+        {error && <Alert variant="danger">{error}</Alert>}
+
         <Form.Group className="mb-3" controlId="formGroupEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control ref={emailRef} type="email" placeholder="Enter email" />
