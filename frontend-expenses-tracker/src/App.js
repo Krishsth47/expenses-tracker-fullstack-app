@@ -1,13 +1,19 @@
-import logo from "./logo.svg";
 import "./App.css";
-import { Button } from "bootstrap";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { LoginPage } from "./pages/LoginPage";
+import { RegisterPage } from "./pages/RegisterPage";
+import { Dashboard } from "./pages/Dashboard";
 
 function App() {
   return (
-    <div className="App">
-      <Button variant="primary">
-        <i class="fa-brands fa-font-awesome"></i>
-      </Button>
+    <div>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
